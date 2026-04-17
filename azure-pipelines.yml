@@ -28,7 +28,7 @@ stages:
     - script: dotnet build MvcAgileProcessApp.sln --configuration $(buildConfiguration)
       displayName: 'Build'
 
-    # ✅ ADD THIS (UNIT TEST STEP)
+    #  (UNIT TEST STEP)
     - script: dotnet test MvcAgileProcessApp.sln --configuration $(buildConfiguration)
       displayName: 'Run Unit Tests'
 
