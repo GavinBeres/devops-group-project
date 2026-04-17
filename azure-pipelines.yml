@@ -1,0 +1,65 @@
+trigger:
+- main
+
+pool:
+  name: Default
+
+variables:
+  buildConfiguration: 'Release'
+
+stages:
+
+# ------------------------
+# BUILD STAGE
+# ------------------------
+- stage: Build
+  displayName: Build Stage
+  jobs:
+  - job: BuildJob
+    steps:
+
+    - task: UseDotNet@2
+      displayName: 'Use .NET 8 SDK'
+      inputs:
+        packageType: 'sdk'
+        version: '8.0.x'
+
+    - script: dotnet restore MvcAgileProcessApp.sln
+      displayName: 'Restore'
+
+    - script: dotnet build MvcAgileProcessApp.sln --configuration $(buildConfiguration)
+      displayName: 'Build'
+
+    - script: dotnet publish MvcAgileProcessApp.sln --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
+      displayName: 'Publish'
+
+    - task: PublishBuildArtifacts@1
+      displayName: 'Publish Artifact'
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
+
+
+# ------------------------
+# DEPLOY STAGE
+# ------------------------
+- stage: Deploy
+  displayName: Deploy Stage
+  dependsOn: Build
+  jobs:
+  - deployment: DeployWeb
+    displayName: Deploy MVC App
+    environment: mvc-webapp-env
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+
+          - download: current
+            artifact: drop
+
+          - script: |
+              echo "Deploying MVC App..."
+              dir $(Pipeline.Workspace)
+            displayName: 'Simulated Deployment'
