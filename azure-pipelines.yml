@@ -39,11 +39,9 @@ stages:
         publishLocation: 'Container'
 
 
-# ------------------------
-# DEPLOY STAGE
-# ------------------------
+# CD Stage for deploying MVC app
 - stage: Deploy
-  displayName: Deploy Stage
+  displayName: CD Deploy Stage
   dependsOn: Build
   jobs:
   - deployment: DeployWeb
