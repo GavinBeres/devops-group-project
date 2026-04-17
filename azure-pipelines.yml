@@ -14,6 +14,7 @@ stages:
   displayName: Build Stage
   jobs:
   - job: BuildJob
+    displayName: Build Job
     steps:
 
     - task: UseDotNet@2
@@ -22,15 +23,31 @@ stages:
         packageType: 'sdk'
         version: '8.0.x'
 
+    - task: SonarCloudPrepare@3
+      displayName: 'Prepare SonarCloud Analysis'
+      inputs:
+        SonarCloud: 'sonarcloud-connection'
+        organization: 'gavinberes'
+        scannerMode: 'dotnet'
+        projectKey: 'GavinBeres_devops-group-project'
+        projectName: 'devops-group-project'
+
     - script: dotnet restore MvcAgileProcessApp.sln
       displayName: 'Restore'
 
     - script: dotnet build MvcAgileProcessApp.sln --configuration $(buildConfiguration)
       displayName: 'Build'
 
-    #  (UNIT TEST STEP)
     - script: dotnet test MvcAgileProcessApp.sln --configuration $(buildConfiguration)
       displayName: 'Run Unit Tests'
+
+    - task: SonarCloudAnalyze@3
+      displayName: 'Run SonarCloud Analysis'
+
+    - task: SonarCloudPublish@3
+      displayName: 'Publish SonarCloud Quality Gate'
+      inputs:
+        pollingTimeoutSec: '300'
 
     - script: dotnet publish MvcAgileProcessApp.sln --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
       displayName: 'Publish'
