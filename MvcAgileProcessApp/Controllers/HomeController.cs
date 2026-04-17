@@ -22,7 +22,7 @@ namespace MvcAgileProcessApp.Controllers
         {
             return View();
         }
-
+        //duration
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
