@@ -9,9 +9,7 @@ variables:
 
 stages:
 
-# ------------------------
-# BUILD STAGE
-# ------------------------
+# CI pipeline for MVC group project
 - stage: Build
   displayName: Build Stage
   jobs:
