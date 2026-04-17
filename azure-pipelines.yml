@@ -28,6 +28,10 @@ stages:
     - script: dotnet build MvcAgileProcessApp.sln --configuration $(buildConfiguration)
       displayName: 'Build'
 
+    # ✅ ADD THIS (UNIT TEST STEP)
+    - script: dotnet test MvcAgileProcessApp.sln --configuration $(buildConfiguration)
+      displayName: 'Run Unit Tests'
+
     - script: dotnet publish MvcAgileProcessApp.sln --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)
       displayName: 'Publish'
 
